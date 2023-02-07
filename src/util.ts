@@ -4,7 +4,6 @@ import { VNode, ComponentType } from 'types/preact'
 
 export const htmPreact = htm.bind(h) as (strings: TemplateStringsArray, ...values: Array<ComponentType>) => VNode
 
-
 const templateSlotRE = /\$\{(.*?)\}/g
 export function renderTemplate(template: string, data: Record<string, string>) {
   return template.replaceAll(templateSlotRE, replaceTemplateSlot)
@@ -17,4 +16,13 @@ export function renderTemplate(template: string, data: Record<string, string>) {
 export function readTextFileFromModule(importSpecifier: string, moduleMeta = import.meta) {
   const resolvedPath = new URL(moduleMeta.resolve(importSpecifier)).pathname
   return Deno.readTextFile(resolvedPath)
+}
+
+export function escapeHtmlString(str: string) {
+  return str
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll("'", "&#39;")
+    .replaceAll("\"", "&quot;")
 }
