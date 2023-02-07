@@ -1,5 +1,4 @@
 import htm from 'htm'
-import { dirname, join } from 'path'
 import { h } from 'preact'
 import { VNode, ComponentType } from 'types/preact'
 
