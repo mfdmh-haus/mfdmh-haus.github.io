@@ -1,5 +1,6 @@
 
-name: pages-build-deployment
+# Simple workflow for deploying static content to GitHub Pages
+name: Build and deploy site for Pages
 
 on: [push]
 
