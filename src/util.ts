@@ -5,6 +5,7 @@ import { VNode, ComponentType } from 'types/preact'
 export const htmPreact = htm.bind(h) as (strings: TemplateStringsArray, ...values: Array<ComponentType>) => VNode
 
 const templateSlotRE = /\$\{(.*?)\}/g
+export type TemplateData = Record<string, string>
 export function renderTemplate(template: string, data: Record<string, string>) {
   return template.replaceAll(templateSlotRE, replaceTemplateSlot)
 
