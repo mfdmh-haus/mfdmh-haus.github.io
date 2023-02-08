@@ -1,7 +1,14 @@
-import { readTextFileFromModule, renderTemplate } from "~/util.ts";
+import { readTextFileFromModule, renderTemplate, TemplateData } from "~/util.ts";
 
-const template = await readTextFileFromModule('./template.html', import.meta)
+const template = await readTextFileFromModule("./template.html", import.meta);
 
-export const KindWords = (props: {photo: string, name: string, distinction: string, quote: string}) => {
-  return renderTemplate(template, props)
+export interface KindWordsProps extends TemplateData {
+  photo: string;
+  name: string;
+  distinction: string;
+  quote: string;
 }
+
+export const KindWords = (props: KindWordsProps) => {
+  return renderTemplate(template, props);
+};
