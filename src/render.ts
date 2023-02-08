@@ -6,6 +6,7 @@ import {
 } from "fs";
 import {renderTemplate} from '~/util.ts';
 import {Home} from "~/pages/Home/mod.ts";
+import * as Deno_ from "~/posts/Deno/mod.ts";
 
 
 const DIST_DIR = `${Deno.cwd()}/docs`;
@@ -19,6 +20,7 @@ const getStandardTitle = (pageTitle: string) => `${pageTitle} - 2nd Thought`
 
 const pages = [
     {filePath: 'index', content: renderTemplate(documentTemplate, {title: getStandardTitle("home"), content: Home()})},
+    {filePath: 'post/deno', content: renderTemplate(documentTemplate, {title: getStandardTitle("Deno"), content: Deno_.Post()})},
 ];
 
 export async function render() {
