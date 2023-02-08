@@ -16,7 +16,7 @@ await copy(STATIC, `${DIST_DIR}/static`, {overwrite: true});
 
 const documentTemplate = await Deno.readTextFile(`${Deno.cwd()}/src/html/document.html`)
 
-const getStandardTitle = (pageTitle: string) => `${pageTitle} - 2nd Thought`
+const getStandardTitle = (pageTitle: string) => `${pageTitle} - Canfield R&D`
 
 const pages = [
     {filePath: 'index', content: renderTemplate(documentTemplate, {title: getStandardTitle("home"), content: Home()})},
