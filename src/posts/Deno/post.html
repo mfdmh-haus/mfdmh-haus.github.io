@@ -1,9 +1,193 @@
 
 <acticle>
-  <h2>Deno!</h2>
-  When I started working with Deno a few days ago, latest was v1.30.0. Now it's 1.30.3!
-  Batteries included: TypeScript support, Package manager, Bundler, Watcher
+  <h1>Deno: A promising branch of JavaScript evolution</h1>
+
+  <p>Deno is a (potential) Node replacement brought to us by the same person who brought us Node, Ryan Dahl. Its design and implementation, inspired by his perceived <a href="https://www.youtube.com/watch?v=M3BM9TB-8yA">mistakes</a> with Node, benefits from the experience and wisdom gained with Deno's predecessor</p>
+
+  <p>
+    I started using Deno recently for some personal projects. Let's dive right in with some example code!
+  </p>
+
+  <pre>
+    import { serve } from "http"
+    import { handleOpen, handleClose, handleMessage, handleError } from "./game.ts"
+
+    const rootDir = Deno.cwd()
+
+    // handler for all HTTP requests
+    async function handleHttp(request: Request) {
+      const url = new URL(request.url)
+
+      if(url.pathname === "/start_web_socket") {
+        const {socket, response} = Deno.upgradeWebSocket(request)
+        socket.onopen = (socketEvent) => handleOpen(socket, socketEvent)
+        socket.onclose = (socketEvent) => handleClose(socket, socketEvent)
+        socket.onmessage = (socketEvent) => handleMessage(socket, socketEvent)
+        socket.onerror = (socketEvent) => handleError(socket, socketEvent)
+        return response
+      } else if(url.pathname === "/") {
+        const indexHtml = await Deno.readFile(`${rootDir}/public/index.html`)
+        return new Response(indexHtml)
+      } else if(url.pathname.startsWith("/public")) {
+        const content = await Deno.readFile(`${rootDir}/${url.pathname}`)
+        return new Response(content)
+      }
+      return new Response("Not found", {status: 404})
+    }
+
+    // start the HTTP server
+    serve(handleHttp)
+  </pre>
+
+  <p>The above code is for an HTTP server written in TypeScript for Deno. It serves a client (index.html) and its assets (stored in "/public") and can upgrade connections to use WebSockets.</p>
+
+  <p>Its business logic is hidden in a separate module ("./game.ts") that it interfaces through event handlers.</p>
+
+  <p>If you'll excuse the inelegance and innefficiency, I'd like to use this code to illustrate some points about Deno.</p>
+
+  <p>First of all:</p>
+
+  <h2 id="why_deno">Why Deno?</h2>
+
+  As someone who's run into his fair share of GYP-related build failures, the mere fact that Deno does not use <a href="https://gyp.gsrc.io/">GYP</a> in itself very compelling. But aside from addressing <a href="https://www.youtube.com/watch?v=M3BM9TB-8yA">Ryan's 10 (perceived) mistakes with Node</a>, Deno has a lot going for it. Including:
+
+  <h3 id="stdlib">There's a <a href="https://deno.land/manual/basics/standard_library">standard library</a></h3>
+
+  <p>
+    For example, the HTTP library used above.
+  </p>
+
+  <p>
+    Enough said.
+  </p>
+
+  <h3>There's <a href="https://deno.land/manual/references/contributing/style_guide">an official style guide</a></h3>
+
+  <p>
+  There are a lot of opinions out there about code style and conventions in the Node community, but none with the blessing of its maintainers. This means that there's a lot of inconsistency across projects adhering to differing style guides, leading to developers needing to use their precious time to work around these inconsistencies in order to avoid seriously annoying each other.
+  </p>
+
+  <h3 id="batteries_included">Batteries included</h3>
+
+  <p>Upon installing Deno, you have several things that are commonly desired in modern JavaScript projects:</p>
+
+  <ul>
+    <li>A package manager</li>
+    <li>The (optional) type safety of TypeScript</li>
+    <li>A script bundler with the ability to watch the entry point for changes</li>
+  </ul>
+
+  <h3 id="web_interoperable">Web interoperable</h3>
+
+  <p><a href="https://www.rfc-editor.org/">A lot</a> of careful thought by a diverse set of intelligent people has gone into the design of the Web Platform, and as a lot of JavaScript applications have historically been for the Web, it only makes sense that Deno would <a href="https://deno.land/manual/runtime/web_platform_apis">attempt</a> to be harmonious with these APIs.</p>
+
+  <p>Node, on the otherhand, differs signifantly from these standards, leading to significant work for developers needing to port code from Node to the Browser or vise-versa. In fairness, though, these APIs were a lot less developed when Node first appeared, and its rapid adoption meant that its early design choices are now more or less set in stone.</p>
+
+  <h3>Node Compatibility</h3>
+
+  <p>Deno can leverage many existing Node packages as long as they support ES Modules and do not rely on proprietary Node APIs and can be imported directly from NPM using a special "npm:" import specifier.</p>
+
+  <h3>Possibly more secure</h3>
+
+  <p>In Deno, permissions, such as read access to the filesystem, must be specifically granted.</p>
+
+  <p>
+  Also, since so much is <a href="batteries_included">included</a> in Deno itself, and because it has a <a href="#stdlib">standard library</a>, the number of packages that need to be installed for any given project are much lower. Every installed package is a potential security <a href="https://arstechnica.com/information-technology/2021/09/npm-package-with-3-million-weekly-downloads-had-a-severe-vulnerability/">risk</a>, as <a href="https://www.cisecurity.org/advisory/a-vulnerability-in-an-npm-package-could-allow-for-remote-code-execution_2021-136">new</a> <a href="https://www.bleepingcomputer.com/news/security/big-sabotage-famous-npm-package-deletes-files-to-protest-ukraine-war/">vulnerabilities</a> are discovered every day. With fewer packages to install, the chances are greatly reduced of a developer installing an insecure package, whether the vulnerabily is currently known or discovered later.
+  </p>
+
+  <h3>Written in Rust</h3>
+
+  <p>
+  Of interest to those who <a href="#is_it_fast">actually</a> have a need for speed, that Deno is written in Rust means that there's more potential for interoperability between Deno and <a href="https://webassembly.org/">WebAssembly</a> code. In such cases, you identify the "hot" parts of the codebase through careful analysis of runtime behavior and try to re-write them with the goal of making them faster. When it seems to already be using the most efficient possible algorithm, there's still hope: Rewrite in another language that has the potential for better performance. For example, Rust!
+  </p>
+
+  <p>
+  For example, since Deno is <a href="web_interoperable">Web interoperable</a>, code written in Rust can be loaded via WebAssembly in Deno the same way it would be in the Browser, but also it can be loaded as an <a href="https://github.com/denoland/deno/pull/3372">extension</a>.
+  </p>
+
+  <h3>Evolving Rapidly</h3>
+
+  <p>When I started working with Deno a few days ago, the latest release was v1.30.0. Now it's v1.30.3! Which brings me to my next point&hellip;</p>
+
+  <h2 id="why_deno">Why Not Deno?</h2>
+
+  <p>Though I'm enjoying Deno for personal projects, it may not be right for everyone and for every project, especially since its still &emdash;</p>
+
+  <h3>Young and Evolving Rapidly</h3>
+
+  <p>Things software relying on Deno, and Deno itself, are relatively likely to break because of unintended consequences.</p>
+
+  <p>The ecosystem around Deno is relatively small. See also <a href="#node_compat">Node Compatibility</a></p>
+
+  <h3>A Deploy-time Surprise</h3>
+
+  <p>
+  This may only be relevant for <a href="https://deno.com/deploy">Deno Deploy</a>, but I was eager get something online ASAP, knowing that there's often a lot of adjustments to be made in order to get code that works on my machine to work in a production environment, and I was not wrong. I was surprised to learn that, at least in Deno Deploy, the <pre>Deno</pre> global is not the same as in a normal Deno install. In what's referred to as the <a href="https://deno.com/deploy/docs/runtime-api">Deploy Runtime</a> only a blessed subset of the stable APIs are available.
+  </p>
+
+  <p>
+    All in all, it wasn't too hard to get my code ready for the deploy runtime. Up to this point, I was using only things built-in to Deno to see how much juice those included batteries hold. I ended up replacing `Deno.listen` with `serve` from the standard library's HTTP package, which had the side-benefit of simplifying my code a bit.
+  </p>
+
+  <h2>The Way of Deno</h2>
+  <p>
+    Perhaps taking inspiration from Python, Deno's developers favor code that is explicit rather than relying built-in rules, but perhaps to an even greater degree than Python. For example, see the section on <a href="#import_specifiers">import specifiers</a>. Analogously, Python has "__init__.py".
+  </p>
+
+  <h2>Differences from Node</h2>
+
+  See also: <a href="#why_deno">Why Deno?</a> and <a href="#why_deno">Why Not Deno?</a>
+
+  For those coming from Node, there's a few things to get used to.
+
+  <h3>Package handling</h3>
+  <p>Package handling is completely different in Deno:</p>
+
+  <ul>
+    <li>There is no package.json</li>
+    <li>There is no node_modules (but there is a local cache)</li>
+    <li>There is no analog to NPM (packages can be loaded from a variety of sources, including NPM)</li>
+    <li>Packages are typically referenced by URL
+      <ul>
+        <li>Those URLs can be used as import specifiers</li>
+      </ul>
+    </li>
+    <li>But <a href="https://github.com/WICG/import-maps">import maps</a> can be used to provide a project-wide alias for URLs. This is the closest analog to package.json</li>
+    <li>Alternatively, import and re-export packages from a cental module
+      <ul>
+        <li>An advantage with this is having a "deps.js" for runtime dependencies, "dev_deps.js" for development dependencies, etc.</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3 id="import_specifiers">Import specifiers must have full file paths</h3>
+
+  <p>For background, an <i>import specifier</i> is the string used in an import statement in a module to reference another module.</p>
+
+  <p>
+    In Node.js, files named "index.js" have special significance in its import resolution scheme, allowing the path to the directory to be used as the import specifier. Deno, however, always requires the full path to a module. Its developers <a href="https://deno.land/manual/references/contributing/style_guide#do-not-use-the-filename-indextsindexjs">recommend</a> using the name "mod.js" (or "mod.ts" for TypeScript) in place of "index.js", merely as a convention; the name "mod" has no significance to Deno itself. This is an example of <a href="preference_explicit">Deno's preference for explicitness.</a>
+  </p>
+
+  <p>In a similar vein, while Node.js allows omitting the file extension in import specifiers, Deno does not.</p>
+
+  <h2 id="is_it_fast">But is it <i>fast?</i></h2>
+
+  <p>I don't know if Deno is faster than Node, partially because the question is deceptively simple. Fast for what kind of application? Under what circumstances? Relative to what?</p>
+
+  <p>A lot of fuss gets made about relative speed of execution possible with various programming langauges. I personally think that's usually just a distraction, because speed doesn't matter until it matters.</p>
+
+  <p>For these reasons I'm not going to even attempt to answer this question. If that's what you're interested in, there's plenty of other pages on the Web that do.</p>
+
+  <!--
+  Batteries included: TypeScript support, Package manager, Bundler, Watcher, Deno global
   Secure by default
+  ES Modules by default
   Surprise! Deno Deploy's Deno is not the same as your local Deno. It's <a href="https://deno.com/deploy/docs/runtime-api">a subset of the stable APIs</a>.
-  Favors Web standards over Node.js conventions: Supports but doesn't force you to use <a href="https://github.com/WICG/import-maps">import maps</a> as an alternative to NPM's package.json <a href="https://docs.npmjs.com/cli/v9/configuring-npm/package-json#dependencies">dependencies field</a> It does not have a built-in analog for devDependencies or peerDependencies. For something like that, they recommend <a href="https://deno.land/manual@v1.30.3/examples/manage_dependencies">this approach</a>.
+  Favors Web standards over Node.js conventions: Supports but doesn't force you to use <a href="https://github.com/WICG/import-maps">import maps</a> as an alternative to NPM's package.json <a href="https://docs.npmjs.com/cli/v9/configuring-npm/package-json#dependencies">dependencies field</a> It does not have a built-in analog for devDependencies or peerDependencies. For something like that, they recommend <a href="https://deno.land/manual/examples/manage_dependencies">this approach</a>.
+
+  -->
+
+  <h2>Conclusion</h2>
+
+  So far I'm enjoying it. While it may not be mature enough yet for serious, professional applications, it's a far better developer experience than Node.js because of its out-of-the-box support for TypeScript, its built-in developer tooling and its saner, smaller API surface that is more in line with Web and ECMAScript standards. I hope that, over time, and if its developers keep up the good work, adoption of Deno will increase, which will drive it towards being a generally viable replacement for Node.
 </article>
