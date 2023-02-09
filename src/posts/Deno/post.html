@@ -13,8 +13,7 @@
   <h2>What is <a href="https://deno.land/">Deno</a>?</h2>
   <p>Tip: This excellent <a href="https://oscarotero.com/deno/">cheat sheet</a> can give you a sense, at a glance, of what Deno has to offer.</p>
 
-  <p>Deno is a (potential) Node replacement brought to us by the same person who brought us Node, Ryan Dahl. Its design and implementation, inspired by his perceived <a href="https://www.youtube.com/watch?v=M3BM9TB-8yA">mistakes</a> with Node, benefits from the experience and wisdom gained with Deno's predecessor.</p>
-
+  <p>Deno is a (potential) Node replacement brought to us by the same person who brought us Node, Ryan Dahl. Its design and implementation, inspired by his <a href="https://www.youtube.com/watch?v=M3BM9TB-8yA">regrets</a> regarding Node, benefits from the experience and wisdom gained with Deno's predecessor.</p>
 
   <p>
     I started using Deno recently for some personal projects. Let's dive right in with some example code!
@@ -56,11 +55,11 @@
 
   <p>The above code is for an HTTP server written for Deno. It serves a client (index.html) and its assets (stored in "/public") and can upgrade connections to use WebSockets.</p>
 
-  <p>Its business logic is hidden in a separate module ("./game.ts") that it interfaces through event handlers.</p>
+  <p>Its business logic is hidden in a separate module ("./game.ts") that it interfaces with through event handlers.</p>
 
-  <p>This script can be turned into an executable (on Linux/Unix-like systems) by chmod'ing it and adding a hashbang:</p>
+  <p id="shebang">This script can be turned into an executable (on Linux/Unix-like systems) by chmod'ing it and adding a <a href="https://en.wikipedia.org/wiki/Shebang_(Unix)">hashbang</a>:</p>
 
-  <pre>#!/usr/bin/env -S deno run --allow-net --allow-read server.ts</pre>
+  <pre>#!/usr/bin/env -S deno run --allow-net --allow-read</pre>
 
   <p>If you'll excuse the inelegance and innefficiency, I'd like to use this code to illustrate some points about Deno.</p>
 
@@ -94,37 +93,48 @@
     <li>A package manager</li>
     <li>The (optional) type safety of TypeScript</li>
     <li>A script bundler with the ability to watch the entry point for changes</li>
+    <li>A linter and formatter</li>
+    <li>A test runner</li>
+    <li>...and more!</li>
   </ul>
 
   <h3 id="web_interoperable">Web interoperable</h3>
 
-  <p><a href="https://www.rfc-editor.org/">A lot</a> of careful thought by a diverse set of intelligent people has gone into the design of the Web Platform, and as a lot of JavaScript applications have historically been for the Web, it only makes sense that Deno would <a href="https://deno.land/manual/runtime/web_platform_apis">attempt</a> to be harmonious with these APIs.</p>
+  <p><a href="https://www.rfc-editor.org/">A lot</a> of careful thought by a diverse set of intelligent people has gone into the design of the Web Platform, and as a lot of JavaScript applications have historically been for the Web, it only makes sense that Deno's APIs would <a href="https://deno.land/manual/runtime/web_platform_apis">resemble</a> those of the Web, where it makes sense.</p>
 
-  <p>Node, on the otherhand, differs signifantly from these standards, leading to significant work for developers needing to port code from Node to the Browser or vise-versa. In fairness, though, these APIs were a lot less developed when Node first appeared, and its rapid adoption meant that its early design choices are now more or less set in stone.</p>
+  <p>Node's APIs, on the otherhand, differ signifantly from those of the Web, leading to significant work for developers needing to port code from Node to the Browser or vise-versa. In fairness, though, these APIs were a lot less developed when Node first appeared, and its rapid adoption meant that its early design choices are now more or less set in stone.</p>
 
   <h3>Node Compatibility</h3>
 
-  <p>Deno can leverage many existing Node packages as long as they support ES Modules and do not rely on proprietary Node APIs and can be imported directly from NPM using a special "npm:" import specifier.</p>
+  <p>Deno can leverage many existing Node packages as long as they support ES Modules and do not rely on proprietary Node APIs, and can be imported directly from NPM using a special "npm:" import specifier.</p>
 
   <h3>Possibly more secure</h3>
 
-  <p>In Deno, permissions, such as read access to the filesystem, must be specifically granted. It's an approach they call "secure by default."</p>
+  <p>In Deno, permissions, such as read access to the filesystem, must be specifically granted. It's an approach they call "secure by default." This is what those flags are for in the <a href="shebang">shebang</a> above.</p>
 
   <p>
   Also, since so much is <a href="batteries_included">included</a> in Deno itself, the number of packages that need to be installed for any given project are much lower. Every installed package is a potential security <a href="https://arstechnica.com/information-technology/2021/09/npm-package-with-3-million-weekly-downloads-had-a-severe-vulnerability/">risk</a>, as <a href="https://www.cisecurity.org/advisory/a-vulnerability-in-an-npm-package-could-allow-for-remote-code-execution_2021-136">new</a> <a href="https://www.bleepingcomputer.com/news/security/big-sabotage-famous-npm-package-deletes-files-to-protest-ukraine-war/">vulnerabilities</a> are discovered every day. With fewer packages to install, the chances are greatly reduced of a developer installing an insecure package, whether the vulnerabily is currently known or discovered later.
   </p>
 
-  <p>And when packages are needed, its <a href="#stdlib">standard library</a>, covers a lot of common cases, and should, in theory, be under more scrutiny and therefore less likely to be insecure</p>
+  <p>And when packages <i>are</i> needed, its <a href="#stdlib">standard library</a> covers a lot of common cases, and should, in theory, be under more scrutiny and therefore less likely to be insecure</p>
 
   <h3>Written in Rust</h3>
 
   <p>
-  Of interest to those who <a href="#is_it_fast">actually</a> have a need for speed, that Deno is written in Rust means that there's more potential for interoperability between Deno and <a href="https://webassembly.org/">WebAssembly</a> code. In such cases, you identify the "hot" parts of the codebase through careful analysis of runtime behavior and try to re-write them with the goal of making them faster. When it seems to already be using the most efficient possible algorithm, there's still hope: Rewrite in another language that has the potential for better performance. For example, Rust!
+   That Deno is written in Rust means that there's more potential for interoperability between Deno and <a href="https://webassembly.org/">WebAssembly</a> code.
+  </p>
+
+  <h4>Need for speed</h4>
+  <p>When there's <a href="#is_it_fast">actually</a> a need for speed, we identify the bottlenecks of the codebase through careful analysis of runtime behavior and try to re-write them with the goal of making them faster. When it seems to already be using the most efficient possible algorithm, there's still hope: Rewrite in another language that has the potential for better performance.
   </p>
 
   <p>
-  For example, since Deno is <a href="web_interoperable">Web interoperable</a>, code written in Rust can be loaded via WebAssembly in Deno the same way it would be in the Browser, but also it can be loaded as an <a href="https://github.com/denoland/deno/pull/3372">extension</a>.
+  Using Rust to write high-performance software is all the rage these days, and since Deno is <a href="web_interoperable">Web interoperable</a>, code written in Rust can be loaded via WebAssembly in Deno the same way it would be in the Browser, but it can also be loaded as an <a href="https://github.com/denoland/deno/pull/3372">extension</a>.
   </p>
+
+  <h4>Denos all the way down</h4>
+
+  <p>This doesn't seem very practical unless you're writing a developer tool, but it is cool. Since Rust can be compiled into WebAssembly and WebAssembly is basically JavaScript, Deno can (in theory) be run anywhere JavaScript can run, including in a Web Browser or in Deno itself!</p>
 
   <h3>Evolving Rapidly</h3>
 
@@ -238,7 +248,7 @@
 
   <h3>Secure by default</h3>
 
-  <p>I can imagine, though I have not run in to it yet myself, a situation in which needing to always explicitly grant permissions could be more trouble than it's worth</p>
+  <p>I can imagine, though I have not run in to it yet myself, a situation in which needing to always explicitly grant permissions could be more trouble than it's worth.</p>
 
   <h2>The Way of Deno</h2>
   <p>
