@@ -1,13 +1,27 @@
 
 <acticle>
-  <h1>Deno: A promising branch of JavaScript evolution</h1>
+  <h1>Discovering Deno</h1>
 
-  <p>Deno is a (potential) Node replacement brought to us by the same person who brought us Node, Ryan Dahl. Its design and implementation, inspired by his perceived <a href="https://www.youtube.com/watch?v=M3BM9TB-8yA">mistakes</a> with Node, benefits from the experience and wisdom gained with Deno's predecessor</p>
+  <figure>
+  <img src="/static/images/deno_news.png" alt="A Deno reading the news" title="How cute&hellip;"/>
+  <caption>Deno reading deno.news by <a href="#Duncan">Duncan</a>. <a href="https://deno.land/artwork">More fantastic Deno artwork</a></caption>
+  </figure>
+  
+
+  <p>First of all:</p>
+
+  <h2>What is <a href="https://deno.land/">Deno</a>?</h2>
+  <p>Tip: This excellent <a href="https://oscarotero.com/deno/">cheat sheet</a> can give you a sense, at a glance, of what Deno has to offer.</p>
+
+  <p>Deno is a (potential) Node replacement brought to us by the same person who brought us Node, Ryan Dahl. Its design and implementation, inspired by his perceived <a href="https://www.youtube.com/watch?v=M3BM9TB-8yA">mistakes</a> with Node, benefits from the experience and wisdom gained with Deno's predecessor.</p>
+
 
   <p>
     I started using Deno recently for some personal projects. Let's dive right in with some example code!
   </p>
 
+  <figure>
+  <caption>/src/server/mod.ts</caption>
   <pre>
     import { serve } from "http"
     import { handleOpen, handleClose, handleMessage, handleError } from "./game.ts"
@@ -38,14 +52,19 @@
     // start the HTTP server
     serve(handleHttp)
   </pre>
+  </figure>
 
-  <p>The above code is for an HTTP server written in TypeScript for Deno. It serves a client (index.html) and its assets (stored in "/public") and can upgrade connections to use WebSockets.</p>
+  <p>The above code is for an HTTP server written for Deno. It serves a client (index.html) and its assets (stored in "/public") and can upgrade connections to use WebSockets.</p>
 
   <p>Its business logic is hidden in a separate module ("./game.ts") that it interfaces through event handlers.</p>
 
+  <p>This script can be turned into an executable (on Linux/Unix-like systems) by chmod'ing it and adding a hashbang:</p>
+
+  <pre>#!/usr/bin/env -S deno run --allow-net --allow-read server.ts</pre>
+
   <p>If you'll excuse the inelegance and innefficiency, I'd like to use this code to illustrate some points about Deno.</p>
 
-  <p>First of all:</p>
+  <p>So&hellip;</p>
 
   <h2 id="why_deno">Why Deno?</h2>
 
@@ -89,11 +108,13 @@
 
   <h3>Possibly more secure</h3>
 
-  <p>In Deno, permissions, such as read access to the filesystem, must be specifically granted.</p>
+  <p>In Deno, permissions, such as read access to the filesystem, must be specifically granted. It's an approach they call "secure by default."</p>
 
   <p>
-  Also, since so much is <a href="batteries_included">included</a> in Deno itself, and because it has a <a href="#stdlib">standard library</a>, the number of packages that need to be installed for any given project are much lower. Every installed package is a potential security <a href="https://arstechnica.com/information-technology/2021/09/npm-package-with-3-million-weekly-downloads-had-a-severe-vulnerability/">risk</a>, as <a href="https://www.cisecurity.org/advisory/a-vulnerability-in-an-npm-package-could-allow-for-remote-code-execution_2021-136">new</a> <a href="https://www.bleepingcomputer.com/news/security/big-sabotage-famous-npm-package-deletes-files-to-protest-ukraine-war/">vulnerabilities</a> are discovered every day. With fewer packages to install, the chances are greatly reduced of a developer installing an insecure package, whether the vulnerabily is currently known or discovered later.
+  Also, since so much is <a href="batteries_included">included</a> in Deno itself, the number of packages that need to be installed for any given project are much lower. Every installed package is a potential security <a href="https://arstechnica.com/information-technology/2021/09/npm-package-with-3-million-weekly-downloads-had-a-severe-vulnerability/">risk</a>, as <a href="https://www.cisecurity.org/advisory/a-vulnerability-in-an-npm-package-could-allow-for-remote-code-execution_2021-136">new</a> <a href="https://www.bleepingcomputer.com/news/security/big-sabotage-famous-npm-package-deletes-files-to-protest-ukraine-war/">vulnerabilities</a> are discovered every day. With fewer packages to install, the chances are greatly reduced of a developer installing an insecure package, whether the vulnerabily is currently known or discovered later.
   </p>
+
+  <p>And when packages are needed, its <a href="#stdlib">standard library</a>, covers a lot of common cases, and should, in theory, be under more scrutiny and therefore less likely to be insecure</p>
 
   <h3>Written in Rust</h3>
 
@@ -109,7 +130,7 @@
 
   <p>When I started working with Deno a few days ago, the latest release was v1.30.0. Now it's v1.30.3! Which brings me to my next point&hellip;</p>
 
-  <h2 id="why_deno">Why Not Deno?</h2>
+  <h2 id="why_not_deno">Why Not Deno?</h2>
 
   <p>Though I'm enjoying Deno for personal projects, it may not be right for everyone and for every project, especially since its still &emdash;</p>
 
@@ -122,12 +143,102 @@
   <h3>A Deploy-time Surprise</h3>
 
   <p>
-  This may only be relevant for <a href="https://deno.com/deploy">Deno Deploy</a>, but I was eager get something online ASAP, knowing that there's often a lot of adjustments to be made in order to get code that works on my machine to work in a production environment, and I was not wrong. I was surprised to learn that, at least in Deno Deploy, the <pre>Deno</pre> global is not the same as in a normal Deno install. In what's referred to as the <a href="https://deno.com/deploy/docs/runtime-api">Deploy Runtime</a> only a blessed subset of the stable APIs are available.
+  This may only be relevant for <a href="https://deno.com/deploy">Deno Deploy</a>, but I was eager get something online ASAP, knowing that there's often a lot of adjustments to be made in order to get code that works on my machine to work in a production environment, and I was not wrong. I was surprised to learn that, at least in Deno Deploy, the Deno global is not the same as in a normal Deno install. In what's referred to as the <a href="https://deno.com/deploy/docs/runtime-api">Deploy Runtime</a> only a blessed subset of the stable APIs are available.
   </p>
 
   <p>
-    All in all, it wasn't too hard to get my code ready for the deploy runtime. Up to this point, I was using only things built-in to Deno to see how much juice those included batteries hold. I ended up replacing `Deno.listen` with `serve` from the standard library's HTTP package, which had the side-benefit of simplifying my code a bit.
+    All in all, it wasn't too hard to get my code ready for the deploy runtime. Up to this point, I was using only things built-in to Deno to see how much juice those included batteries hold. I ended up replacing `Deno.serveHttp` with `serve` from the standard library's HTTP package, which had the side-benefit of simplifying my code a bit.
   </p>
+
+  <pre>
+      diff --git a/src/server/mod.ts b/src/server/mod.ts
+      index 67fec14..814550e 100644
+      --- a/src/server/mod.ts
+      +++ b/src/server/mod.ts
+      @@ -1,36 +1,27 @@
+      +import { serve } from "http"
+       import { handleOpen, handleClose, handleMessage, handleError } from "./game.ts"
+       
+       const rootDir = Deno.cwd()
+      -const indexHtml = Deno.readFileSync(`${rootDir}/public/index.html`)
+       
+      -async function handleHttp(conn: Deno.Conn) {
+      -  for await (const httpEvent of Deno.serveHttp(conn)) {
+      -    const url = new URL(httpEvent.request.url)
+      -    if(url.pathname === "/start_web_socket") {
+      -      const {socket, response} = Deno.upgradeWebSocket(httpEvent.request)
+      -      socket.onopen = (socketEvent) => handleOpen(socket, httpEvent, socketEvent)
+      -      socket.onclose = (socketEvent) => handleClose(socket, httpEvent, socketEvent)
+      -      socket.onmessage = (socketEvent) => handleMessage(socket, httpEvent, socketEvent)
+      -      socket.onerror = (socketEvent) => handleError(socket, httpEvent, socketEvent)
+      -      httpEvent.respondWith(response)
+      -    } else if(url.pathname === "/") {
+      -      const response = new Response(indexHtml)
+      -      httpEvent.respondWith(response)
+      -    } else if(url.pathname.startsWith("/public")) {
+      -      const content = await Deno.readFile(`${rootDir}/${url.pathname}`)
+      -      const response = new Response(content)
+      -      httpEvent.respondWith(response)
+      -    }
+      +async function handleHttp(request: Request) {
+      +  const url = new URL(request.url)
+      +  if(url.pathname === "/start_web_socket") {
+      +    const {socket, response} = Deno.upgradeWebSocket(request)
+      +    socket.onopen = (socketEvent) => handleOpen(socket, socketEvent)
+      +    socket.onclose = (socketEvent) => handleClose(socket, socketEvent)
+      +    socket.onmessage = (socketEvent) => handleMessage(socket, socketEvent)
+      +    socket.onerror = (socketEvent) => handleError(socket, socketEvent)
+      +    return response
+      +  } else if(url.pathname === "/") {
+      +    const indexHtml = await Deno.readFile(`${rootDir}/public/index.html`)
+      +    return new Response(indexHtml)
+      +  } else if(url.pathname.startsWith("/public")) {
+      +    const content = await Deno.readFile(`${rootDir}/${url.pathname}`)
+      +    return new Response(content)
+         }
+      +  return new Response("Not found", {status: 404})
+       }
+       
+       const port = Deno.env.get("DENO_ENV") === "production" ? 80 : 8000
+      -for await (const conn of Deno.listen({ port })) {
+      -  handleHttp(conn);
+      -}
+      +serve(handleHttp, {port})
+  </pre>
+
+  <p>Tip: I've found this <a href="https://oscarotero.com/deno/">cheat sheet</a> to be very helpful for remembering what subset of the API is deploy-ready.</p>
+
+  <p>Also, I needed to pass an import-map option to the Deno Deploy GitHub action to get it to find my import map.</p>
+
+  <pre>
+    diff --git a/.github/workflows/deploy.yml b/.github/workflows/deploy.yml
+    index 80ea582..bd67a5f 100644
+    --- a/.github/workflows/deploy.yml
+    +++ b/.github/workflows/deploy.yml
+    @@ -30,3 +30,4 @@ jobs:
+               project: "rtmp-web"
+               entrypoint: ./server/mod.ts
+               root: dist
+    +          import-map: ./import_map.json
+  </pre>
+
+  <pre>&hellip;even though Deno is supposed to heed an "importMap" key in deno.json, which I already had.</pre>
+
+  <figure>
+    <caption>deno.json</caption>
+    <pre>
+      {
+        "importMap": "./import_map.json",
+        "compilerOptions": {
+          "lib": ["dom", "dom.iterable", "dom.asynciterable", "deno.ns"]
+        }
+      }
+    </pre>
+  </figure>
+
+  <h3>Secure by default</h3>
+
+  <p>I can imagine, though I have not run in to it yet myself, a situation in which needing to always explicitly grant permissions could be more trouble than it's worth</p>
 
   <h2>The Way of Deno</h2>
   <p>
@@ -189,5 +300,21 @@
 
   <h2>Conclusion</h2>
 
-  So far I'm enjoying it. While it may not be mature enough yet for serious, professional applications, it's a far better developer experience than Node.js because of its out-of-the-box support for TypeScript, its built-in developer tooling and its saner, smaller API surface that is more in line with Web and ECMAScript standards. I hope that, over time, and if its developers keep up the good work, adoption of Deno will increase, which will drive it towards being a generally viable replacement for Node.
+  So far I'm enjoying Deno. While it <a href="#why_not_deno">may not be right</a> for every project due to its newness or its approach to security, its <a href="why_deno">strengths</a> make it a far better developer experience than Node. I hope that, over time, and if its developers keep up the good work, adoption of Deno will increase, which will drive it towards being a generally viable replacement for Node. It's at least a significant branch of evolution in the JavaScript ecosystem that promises to <a href="https://thenewstack.io/how-node-js-is-addressing-the-challenge-of-ryan-dahls-deno/">shake things up</a> in a good way.
 </article>
+
+
+<section>
+  <h1>Legal stuff</h1>
+
+  <h3 id="Duncan">"Deno reading deno.news"</h3>
+  <p>Copyright 2023 Duncan (<a href="https://twitter.com/dcdunkan">twitter</a>) (<a href="https://github.com/dcdunkan">github</a>)</p>
+
+  <p>Used under the MIT License:</p>
+  <p>
+  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+
+  <p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+
+  <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+</section>
