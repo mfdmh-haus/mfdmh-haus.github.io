@@ -142,7 +142,7 @@
 
   <h2 id="why_not_deno">Why Not Deno?</h2>
 
-  <p>Though I'm enjoying Deno for personal projects, it may not be right for everyone and for every project, especially since its still &emdash;</p>
+  <p>Though I'm enjoying Deno for personal projects, it may not be right for everyone and for every project, especially since its still &mdash;</p>
 
   <h3>Young and Evolving Rapidly</h3>
 
@@ -153,11 +153,15 @@
   <h3>A Deploy-time Surprise</h3>
 
   <p>
-  This may only be relevant for <a href="https://deno.com/deploy">Deno Deploy</a>, but I was eager get something online ASAP, knowing that there's often a lot of adjustments to be made in order to get code that works on my machine to work in a production environment, and I was not wrong. I was surprised to learn that, at least in Deno Deploy, the Deno global is not the same as in a normal Deno install. In what's referred to as the <a href="https://deno.com/deploy/docs/runtime-api">Deploy Runtime</a> only a blessed subset of the stable APIs are available.
+  This may only be relevant for <a href="https://deno.com/deploy">Deno Deploy</a>, but I was eager get something online ASAP, knowing that there's often a lot of adjustments to be made in order to get code that works on my machine to work in a production environment. 
   </p>
 
   <p>
-    All in all, it wasn't too hard to get my code ready for the deploy runtime. Up to this point, I was using only things built-in to Deno to see how much juice those included batteries hold. I ended up replacing `Deno.serveHttp` with `serve` from the standard library's HTTP package, which had the side-benefit of simplifying my code a bit.
+  And I was not wrong: I was surprised to learn that, at least in Deno Deploy, the Deno global is not the same as in a normal Deno install. In what's referred to as the <a href="https://deno.com/deploy/docs/runtime-api">Deploy Runtime</a> only a blessed subset of the stable APIs are available.
+  </p>
+
+  <p>
+    All in all, it wasn't too hard to get my code ready for the deploy runtime. Up to this point, I was using only things built-in to Deno to see how much juice those included batteries hold. I ended up replacing "Deno.serveHttp" with "serve" from the standard library's HTTP package, which had the side-benefit of simplifying my code a bit.
   </p>
 
   <pre>
@@ -250,10 +254,12 @@
 
   <p>I can imagine, though I have not run in to it yet myself, a situation in which needing to always explicitly grant permissions could be more trouble than it's worth.</p>
 
-  <h2>The Way of Deno</h2>
+  <h2 id="way_of_deno">The Way of Deno</h2>
   <p>
     Perhaps taking inspiration from Python, Deno's developers favor code that is explicit rather than relying built-in rules, but perhaps to an even greater degree than Python. For example, see the section on <a href="#import_specifiers">import specifiers</a>. Analogously, Python has "__init__.py".
   </p>
+
+  <p>More on the Deno developers' style (for lack of a better word) can be found in the <a href="https://deno.land/manual/references/contributing/style_guide">style guide</a>.</p>
 
   <h2>Differences from Node</h2>
 
@@ -286,7 +292,7 @@
   <p>For background, an <i>import specifier</i> is the string used in an import statement in a module to reference another module.</p>
 
   <p>
-    In Node.js, files named "index.js" have special significance in its import resolution scheme, allowing the path to the directory to be used as the import specifier. Deno, however, always requires the full path to a module. Its developers <a href="https://deno.land/manual/references/contributing/style_guide#do-not-use-the-filename-indextsindexjs">recommend</a> using the name "mod.js" (or "mod.ts" for TypeScript) in place of "index.js", merely as a convention; the name "mod" has no significance to Deno itself. This is an example of <a href="preference_explicit">Deno's preference for explicitness.</a>
+    In Node.js, files named "index.js" are magic: in its import resolution scheme, the path to such files is equivalent to the path to the containing directory. Deno, however, always requires the full path to a module. Its developers <a href="https://deno.land/manual/references/contributing/style_guide#do-not-use-the-filename-indextsindexjs">recommend</a> using the name "mod.js" (or "mod.ts" for TypeScript) in place of "index.js", merely as a convention; the name "mod" has no significance to Deno itself. This is an example of <a href="#way_of_deno">Deno's preference for explicitness.</a>
   </p>
 
   <p>In a similar vein, while Node.js allows omitting the file extension in import specifiers, Deno does not.</p>
