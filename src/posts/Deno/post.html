@@ -1,5 +1,5 @@
 
-<acticle>
+<article>
   <h1>Discovering Deno</h1>
   <time datetime="2023-02-09">2023, February 9th</time>
 
@@ -23,34 +23,34 @@
   <figure>
   <caption>/src/server/mod.ts</caption>
   <pre>
-    import { serve } from "http"
-    import { handleOpen, handleClose, handleMessage, handleError } from "./game.ts"
+import { serve } from "http"
+import { handleOpen, handleClose, handleMessage, handleError } from "./game.ts"
 
-    const rootDir = Deno.cwd()
+const rootDir = Deno.cwd()
 
-    // handler for all HTTP requests
-    async function handleHttp(request: Request) {
-      const url = new URL(request.url)
+// handler for all HTTP requests
+async function handleHttp(request: Request) {
+  const url = new URL(request.url)
 
-      if(url.pathname === "/start_web_socket") {
-        const {socket, response} = Deno.upgradeWebSocket(request)
-        socket.onopen = (socketEvent) => handleOpen(socket, socketEvent)
-        socket.onclose = (socketEvent) => handleClose(socket, socketEvent)
-        socket.onmessage = (socketEvent) => handleMessage(socket, socketEvent)
-        socket.onerror = (socketEvent) => handleError(socket, socketEvent)
-        return response
-      } else if(url.pathname === "/") {
-        const indexHtml = await Deno.readFile(`${rootDir}/public/index.html`)
-        return new Response(indexHtml)
-      } else if(url.pathname.startsWith("/public")) {
-        const content = await Deno.readFile(`${rootDir}/${url.pathname}`)
-        return new Response(content)
-      }
-      return new Response("Not found", {status: 404})
-    }
+  if(url.pathname === "/start_web_socket") {
+    const {socket, response} = Deno.upgradeWebSocket(request)
+    socket.onopen = (socketEvent) => handleOpen(socket, socketEvent)
+    socket.onclose = (socketEvent) => handleClose(socket, socketEvent)
+    socket.onmessage = (socketEvent) => handleMessage(socket, socketEvent)
+    socket.onerror = (socketEvent) => handleError(socket, socketEvent)
+    return response
+  } else if(url.pathname === "/") {
+    const indexHtml = await Deno.readFile(`${rootDir}/public/index.html`)
+    return new Response(indexHtml)
+  } else if(url.pathname.startsWith("/public")) {
+    const content = await Deno.readFile(`${rootDir}/${url.pathname}`)
+    return new Response(content)
+  }
+  return new Response("Not found", {status: 404})
+}
 
-    // start the HTTP server
-    serve(handleHttp)
+// start the HTTP server
+serve(handleHttp)
   </pre>
   </figure>
 
@@ -166,59 +166,59 @@
   </p>
 
   <pre>
-      diff --git a/src/server/mod.ts b/src/server/mod.ts
-      index 67fec14..814550e 100644
-      --- a/src/server/mod.ts
-      +++ b/src/server/mod.ts
-      @@ -1,36 +1,27 @@
-      +import { serve } from "http"
-       import { handleOpen, handleClose, handleMessage, handleError } from "./game.ts"
-       
-       const rootDir = Deno.cwd()
-      -const indexHtml = Deno.readFileSync(`${rootDir}/public/index.html`)
-       
-      -async function handleHttp(conn: Deno.Conn) {
-      -  for await (const httpEvent of Deno.serveHttp(conn)) {
-      -    const url = new URL(httpEvent.request.url)
-      -    if(url.pathname === "/start_web_socket") {
-      -      const {socket, response} = Deno.upgradeWebSocket(httpEvent.request)
-      -      socket.onopen = (socketEvent) => handleOpen(socket, httpEvent, socketEvent)
-      -      socket.onclose = (socketEvent) => handleClose(socket, httpEvent, socketEvent)
-      -      socket.onmessage = (socketEvent) => handleMessage(socket, httpEvent, socketEvent)
-      -      socket.onerror = (socketEvent) => handleError(socket, httpEvent, socketEvent)
-      -      httpEvent.respondWith(response)
-      -    } else if(url.pathname === "/") {
-      -      const response = new Response(indexHtml)
-      -      httpEvent.respondWith(response)
-      -    } else if(url.pathname.startsWith("/public")) {
-      -      const content = await Deno.readFile(`${rootDir}/${url.pathname}`)
-      -      const response = new Response(content)
-      -      httpEvent.respondWith(response)
-      -    }
-      +async function handleHttp(request: Request) {
-      +  const url = new URL(request.url)
-      +  if(url.pathname === "/start_web_socket") {
-      +    const {socket, response} = Deno.upgradeWebSocket(request)
-      +    socket.onopen = (socketEvent) => handleOpen(socket, socketEvent)
-      +    socket.onclose = (socketEvent) => handleClose(socket, socketEvent)
-      +    socket.onmessage = (socketEvent) => handleMessage(socket, socketEvent)
-      +    socket.onerror = (socketEvent) => handleError(socket, socketEvent)
-      +    return response
-      +  } else if(url.pathname === "/") {
-      +    const indexHtml = await Deno.readFile(`${rootDir}/public/index.html`)
-      +    return new Response(indexHtml)
-      +  } else if(url.pathname.startsWith("/public")) {
-      +    const content = await Deno.readFile(`${rootDir}/${url.pathname}`)
-      +    return new Response(content)
-         }
-      +  return new Response("Not found", {status: 404})
-       }
-       
-       const port = Deno.env.get("DENO_ENV") === "production" ? 80 : 8000
-      -for await (const conn of Deno.listen({ port })) {
-      -  handleHttp(conn);
-      -}
-      +serve(handleHttp, {port})
+diff --git a/src/server/mod.ts b/src/server/mod.ts
+index 67fec14..814550e 100644
+--- a/src/server/mod.ts
++++ b/src/server/mod.ts
+@@ -1,36 +1,27 @@
++import { serve } from "http"
+ import { handleOpen, handleClose, handleMessage, handleError } from "./game.ts"
+ 
+ const rootDir = Deno.cwd()
+-const indexHtml = Deno.readFileSync(`${rootDir}/public/index.html`)
+ 
+-async function handleHttp(conn: Deno.Conn) {
+-  for await (const httpEvent of Deno.serveHttp(conn)) {
+-    const url = new URL(httpEvent.request.url)
+-    if(url.pathname === "/start_web_socket") {
+-      const {socket, response} = Deno.upgradeWebSocket(httpEvent.request)
+-      socket.onopen = (socketEvent) => handleOpen(socket, httpEvent, socketEvent)
+-      socket.onclose = (socketEvent) => handleClose(socket, httpEvent, socketEvent)
+-      socket.onmessage = (socketEvent) => handleMessage(socket, httpEvent, socketEvent)
+-      socket.onerror = (socketEvent) => handleError(socket, httpEvent, socketEvent)
+-      httpEvent.respondWith(response)
+-    } else if(url.pathname === "/") {
+-      const response = new Response(indexHtml)
+-      httpEvent.respondWith(response)
+-    } else if(url.pathname.startsWith("/public")) {
+-      const content = await Deno.readFile(`${rootDir}/${url.pathname}`)
+-      const response = new Response(content)
+-      httpEvent.respondWith(response)
+-    }
++async function handleHttp(request: Request) {
++  const url = new URL(request.url)
++  if(url.pathname === "/start_web_socket") {
++    const {socket, response} = Deno.upgradeWebSocket(request)
++    socket.onopen = (socketEvent) => handleOpen(socket, socketEvent)
++    socket.onclose = (socketEvent) => handleClose(socket, socketEvent)
++    socket.onmessage = (socketEvent) => handleMessage(socket, socketEvent)
++    socket.onerror = (socketEvent) => handleError(socket, socketEvent)
++    return response
++  } else if(url.pathname === "/") {
++    const indexHtml = await Deno.readFile(`${rootDir}/public/index.html`)
++    return new Response(indexHtml)
++  } else if(url.pathname.startsWith("/public")) {
++    const content = await Deno.readFile(`${rootDir}/${url.pathname}`)
++    return new Response(content)
+   }
++  return new Response("Not found", {status: 404})
+ }
+ 
+ const port = Deno.env.get("DENO_ENV") === "production" ? 80 : 8000
+-for await (const conn of Deno.listen({ port })) {
+-  handleHttp(conn);
+-}
++serve(handleHttp, {port})
   </pre>
 
   <p>Tip: I've found this <a href="https://oscarotero.com/deno/">cheat sheet</a> to be very helpful for remembering what subset of the API is deploy-ready.</p>
@@ -226,28 +226,28 @@
   <p>Also, I needed to pass an import-map option to the Deno Deploy GitHub action to get it to find my import map.</p>
 
   <pre>
-    diff --git a/.github/workflows/deploy.yml b/.github/workflows/deploy.yml
-    index 80ea582..bd67a5f 100644
-    --- a/.github/workflows/deploy.yml
-    +++ b/.github/workflows/deploy.yml
-    @@ -30,3 +30,4 @@ jobs:
-               project: "rtmp-web"
-               entrypoint: ./server/mod.ts
-               root: dist
-    +          import-map: ./import_map.json
+diff --git a/.github/workflows/deploy.yml b/.github/workflows/deploy.yml
+index 80ea582..bd67a5f 100644
+--- a/.github/workflows/deploy.yml
++++ b/.github/workflows/deploy.yml
+@@ -30,3 +30,4 @@ jobs:
+           project: "rtmp-web"
+           entrypoint: ./server/mod.ts
+           root: dist
++          import-map: ./import_map.json
   </pre>
 
-  <pre>&hellip;even though Deno is supposed to heed an "importMap" key in deno.json, which I already had.</pre>
+  <p>&hellip;even though Deno is supposed to heed an "importMap" key in deno.json, which I already had.</p>
 
   <figure>
     <caption>deno.json</caption>
     <pre>
-      {
-        "importMap": "./import_map.json",
-        "compilerOptions": {
-          "lib": ["dom", "dom.iterable", "dom.asynciterable", "deno.ns"]
-        }
-      }
+{
+  "importMap": "./import_map.json",
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "dom.asynciterable", "deno.ns"]
+  }
+}
     </pre>
   </figure>
 
