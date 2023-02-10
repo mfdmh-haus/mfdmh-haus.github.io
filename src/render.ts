@@ -6,7 +6,7 @@ import {
 } from "fs";
 import {renderTemplate} from '~/util.ts';
 import {Home} from "~/pages/Home/mod.ts";
-import * as Deno_ from "~/posts/Deno/mod.ts";
+import * as Posts from '~/posts/mod.ts';
 
 
 const DIST_DIR = `${Deno.cwd()}/docs`;
@@ -20,7 +20,8 @@ const getStandardTitle = (pageTitle: string) => `${pageTitle} - Canfield R&D`
 
 const pages = [
     {filePath: 'index', content: renderTemplate(documentTemplate, {title: getStandardTitle("home"), content: Home()})},
-    {filePath: 'post/deno', content: renderTemplate(documentTemplate, {title: getStandardTitle("Deno"), content: Deno_.Post()})},
+    {filePath: 'post/deno', content: renderTemplate(documentTemplate, {title: getStandardTitle("Deno"), content: Posts.Deno.Post()})},
+    {filePath: 'post/persistent_http', content: renderTemplate(documentTemplate, {title: getStandardTitle("Persistent HTTP"), content: Posts.PersistHttp.Post()})},
 ];
 
 export async function render() {
