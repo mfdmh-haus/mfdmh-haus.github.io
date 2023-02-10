@@ -9,7 +9,7 @@ await render()
 // Listen https://chromedevtools.github.io/devtools-protocol/1-2/Page/#method-reload
 // TODO (mh) make debounce this event from building
 // TODO (mh) Deno.kill all previous Deno.run commands https://doc.deno.land/https/github.com/denoland/deno/releases/latest/download/lib.deno.d.ts#Deno.signal
-const watcher = Deno.watchFs(Deno.cwd() + "/src", {recursive: true});
+const watcher = Deno.watchFs([Deno.cwd() + "/src", Deno.cwd() + "/static"], {recursive: true});
 for await (const event of watcher) {
   if(["create", "modify", "remove"].includes(event.kind)) {
     console.log(`Received ${event.kind} event for ${event.paths.join(", ")}`)

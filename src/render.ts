@@ -11,20 +11,22 @@ import * as Posts from '~/posts/mod.ts';
 
 const DIST_DIR = `${Deno.cwd()}/docs`;
 const STATIC = `${Deno.cwd()}/static`;
-await ensureDir(DIST_DIR);
-await copy(STATIC, `${DIST_DIR}/static`, {overwrite: true});
-
-const documentTemplate = await Deno.readTextFile(`${Deno.cwd()}/src/html/document.html`)
 
 const getStandardTitle = (pageTitle: string) => `${pageTitle} - Canfield R&D`
 
-const pages = [
+
+export async function render() {
+  await ensureDir(DIST_DIR);
+  await copy(STATIC, `${DIST_DIR}/static`, {overwrite: true});
+
+  const documentTemplate = await Deno.readTextFile(`${Deno.cwd()}/src/html/document.html`)
+
+  const pages = [
     {filePath: 'index', content: renderTemplate(documentTemplate, {title: getStandardTitle("home"), content: Home()})},
     {filePath: 'post/deno', content: renderTemplate(documentTemplate, {title: getStandardTitle("Deno"), content: Posts.Deno.Post()})},
     {filePath: 'post/persistent_http', content: renderTemplate(documentTemplate, {title: getStandardTitle("Persistent HTTP"), content: Posts.PersistHttp.Post()})},
-];
+  ];
 
-export async function render() {
   for await (const p of pages) {
     if (p.filePath === 'index') {
       await write(`${DIST_DIR}/index.html`, p.content);
