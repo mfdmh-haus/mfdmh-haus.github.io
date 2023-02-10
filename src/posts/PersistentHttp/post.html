@@ -1,0 +1,161 @@
+<article>
+<h1>Smelling the roses with persistent HTTP connections</h1>
+
+<h2>The how, why and why not, using Python’s Pyramid framework</h2>
+
+<aside>The following is a repost of an article I wrote which originally <a href="https://www.rallyhealth.com/coding/smelling-the-roses-with-persistent-http-connections">appeared</a> in the Rally Engineering Blog on <time datetime="2018-12-17">2018, December 12th</a></aside>
+
+<img src="/static/images/smelling_roses.png" alt="a python picking petals of a rose cuddled around a computer" title="I drew this lol"/>
+
+<p>
+In this post I’m going to explain how to respond to requests to a Pyramid web app, though not all at once as per usual, but little by little using a <a href="https://en.wikipedia.org/wiki/HTTP_persistent_connection">persistent HTTP connection</a>. Other technologies, e.g. Node, make this kind of thing much more obvious, but that may not be sufficient reason for everyone to adopt something new. The “why”, explained in more detail towards the end, can be boiled down to potential performance gains, as well as saving electricity and developer sanity. So, if you’re interested in building a modern web app using Pyramid, this article is for you!
+</p>
+
+<h3>The how</h3>
+
+<p>
+Pyramid’s Response class constructor accepts a keyword argument called app_iter, which, unsurprisingly, must be an iterator. Since generator functions return iterators, a generator function can be written to yield each successive part of the response, when we’re d*mn ready.
+</p>
+
+<p>
+However, a possible complication hides in the Web server. waitress, Pyramid’s default Web server buffers responses and only actually sends anything to the client once the response has been completely buffered and terminated. The solution is to use a Web server that allows control over response buffering. I can recommend gunicorn. Due to its design assumptions, I used an asynchronous worker library, gevent, rather than its built-in synchronous workers, which would require configuring an upper limit on response lifetimes. But we’re not about that.
+</p>
+
+<h3>Show me the code!</h3>
+
+<p>
+To begin, make sure you have the latest Python installed, and install cookiecutter, a project scaffolding tool.
+</p>
+
+<pre>
+> pip install cookiecutter
+> cookiecutter gh:Pylons/pyramid-cookiecutter-starter
+project_name [Pyramid Scaffold]: pyramid_chunked_response_example
+repo_name [pyramid_chunked_response_example]:
+Select template_language:
+1 - jinja2
+2 - chameleon
+3 - mako
+Choose from 1, 2, 3 (1, 2, 3) [1]: 1
+Select backend:
+1 - none
+2 - sqlalchemy
+3 - zodb
+Choose from 1, 2, 3 (1, 2, 3) [1]: 1
+</pre>
+
+<p>
+It doesn’t matter what you chose for the template language or the backend, we’re not using either.
+</p>
+
+</pre>
+> cd pyramid_chunked_response_example
+Now fire up your editor of choice and replace “waitress” with “gunicorn[gevent]” in setup.py. This will tell Python to install gunicorn with gevent instead of waitress. Open `pyramid_chunked_response_example/views.py` and replace the contents with:
+</pre>
+
+<pre>
+python3
+from pyramid.response import Response
+from pyramid.view import view_config
+from time import sleep
+from random import randint
+@view_config(route_name="home")
+def home(request): 
+ def generate_numbers_and_silence(): 
+ for i in range(100): 
+ yield bytes("%d\n" % i, encoding='utf-8') 
+ sleep(randint(1, 10)) 
+ return Response(
+ content_type="text/plain", 
+ app_iter=generate_numbers_and_silence()
+ )
+</pre>
+
+<p>
+The above function (“view callable”, in Pyramid lingo) responds to any request by sending the numbers from 0 to 99 one at a time, with a random delay between each number.
+</p>
+
+<p>
+Now, to run the app, first create the virtual environment and install the dependencies:
+</p>
+
+<pre>
+> python3 -m venv $(your_venv_dir)
+</pre>
+
+<p>
+Where $(your_venv_dir) is wherever you put your Python virtual environments.
+</p>
+
+<p>
+If you’re new to venv or Python, just do this:
+</p>
+
+<pre>
+> mkdir env
+> python3 -m venv env
+</pre>
+
+<p>
+Once the virtual environment has been created:
+</p>
+
+<pre>
+> source $(your_venv_dir)/bin/activate
+> pip install --upgrade pip setuptools
+> pip install -e .
+> gunicorn --paste development.ini
+</pre>
+
+<p>
+And in another terminal, make a request to our app using cURL:
+</p>
+
+<pre>
+curl localhost:8000
+</pre>
+
+<p>
+Voila! You should see numbers appear with stuttering irregularity.
+</p>
+
+<p>
+Cool, but when would I use this?
+</p>
+
+<p>
+Using this tactic, any application which needs a mostly one-way flow of time-sensitive messages from server to client can be made more efficient, performant and maintainable. Suppose a request initiates a process that takes relatively long but variable time to complete, a good user experience demands some kind of progress feedback on the client. Likewise, in an application with dynamic resources like a social media site or a stock trader, updates should be reflected on the client in near real-time.
+</p>
+
+<p>
+The traditional solution to this kind of problem is polling: starting a new GET request on a regular interval. This approach either entails a lot of wasted traffic since the requested resource might not change *that* often, or a lot of lag because it changes *way* more often than that. One way that people have tried to mitigate this problem is called long-polling, or sometimes the “hanging GET”. It just means that the server, after receiving a GET request with a resource that hasn’t changed, keeps the request unanswered until the resource *does* change. This saves some network traffic, but it’s *way* trickier to implement. Finally, there are WebSockets, which do solve all of the problems stated above, but their full-duplex powers may be overkill if the client needs to send relatively few messages to the server.
+</p>
+
+<p>
+Instead, a single persistent HTTP connection can be used for torrential server to client communication. Fewer HTTP requests means less power consumption, which is good for the environment and gives mobile phone users more time to use your site. It also means the server and network won’t be bogged down with as many HTTP requests, which will probably be good for performance and overall snappiness. See the second paragraph of the next section for one reason why it may *not* improve performance.
+</p>
+
+<p>
+Though its details are outside the scope of this post, it’s probably good to mention Server Sent Events, a simple and widely supported standard in which the server uses a content encoding called “text/event-stream” and the client can use an implementation of an API called <a href="https://www.w3.org/TR/eventsource/">EventSource</a>.
+</p>
+
+<h3>When would I not use this?</h3>
+
+<p>
+WebSockets might be a better solution If there’s a need for a lot of simultaneous connections, since all browsers have a <a href="http://www.stevesouders.com/blog/2008/03/20/roundup-on-parallel-connections/">limit</a> on the number of simultaneous HTTP connections per domain. This limit is in place because each HTTP connection has relatively high a cost in server CPU usage and network congestion, so even if an application doesn’t run up against the browsers’ limits there still may be larger performance hit for simultaneous connections compared to WebSockets. (author’s note: I haven’t been able to find hard data on the network overhead of *persistent* HTTP connections vs WebSocket connections. I’d love to know if anyone out there can point me to online resources)
+</p>
+
+<p>
+There seems to be a misconception out there about WebSockets having built-in support for authentication/authorization. This may be based on the WebSocket-specific headers `Sec-WebSocket-Key` and `Sec-WebSocket-Accept`. While they may provide some measure of security, actual authentication and authorization needs to be built on top of the WebSocket protocol.
+</p>
+
+<p>
+Finally, as mentioned above, if the client needs to send messages to the server about as often as vice-versa, then WebSockets are once again better, since they are full-duplex protocols.
+</p>
+
+<h3>Conclusion</h3>
+
+<p>
+Persistent HTTP connections can be implemented in Pyramid! They can also be a great alternative to WebSockets and polling techniques for applications that require low-latency client-server communication, especially if the communication is mostly from server to client. Whether they’re right for your application may depend on a lot of factors, some of which might not have been considered here, so you’ll have to come to your own conclusions for your specific use case. For further reading, I suggest this <a href="https://www.smashingmagazine.com/2018/02/sse-websockets-data-flow-http2/">blog post</a> about choosing between WebSockets, polling and server sent events for a mobile-first web app.
+</p>
+</article>
