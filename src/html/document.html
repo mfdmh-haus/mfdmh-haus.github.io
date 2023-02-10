@@ -23,8 +23,49 @@
     <link rel="stylesheet" href="/static/styles/fluid.css">
     <link rel="stylesheet" href="/static/styles/modular-scale.css">
     <link rel="stylesheet" href="/static/styles/typography.css">
+    <link rel="stylesheet" href="/static/styles/u.css">
 
     <style>
+
+      :root {
+        --page-max-width: calc(100% - var(--sidebar-max-width));
+        --page-padding-horizontal: 2em;
+
+        --sidebar-max-width: 20%;
+      }
+
+      .page {
+        max-width: var(--page-max-width);
+        padding: 0 var(--page-padding-horizontal);
+        margin: 0 auto;
+      }
+
+      .page pre {
+        overflow-x: scroll;
+      }
+
+      .page ul {
+        list-style-type: "٭ ";
+      }
+
+      .page ul,
+      .page ol {
+        margin-inline-start: 2em;
+      }
+
+      .page li::marker {
+        padding: 0 1em;
+      }
+
+      .page figure,
+      .page pre {
+        margin-bottom: 1rem;
+      }
+
+      .sidebar {
+        max-width: var(--sidebar-max-width);
+      }
+
     </style>
   </head>
   <body>
@@ -38,9 +79,12 @@
         <li><a href="https://www.opera.com/download" target="_blank">Opera</a></li>
       </ul>
     <![endif]-->
-      <main>
-      ${content}
-      </main>
+      <div class="u-flex u-flex-row">
+        <nav class="sidebar"></nav>
+        <main class="page">
+          ${content}
+        </main>
+      </div>
     <script type="text/javascript">
     </script>
   </body>
