@@ -12,7 +12,7 @@ import * as Posts from '~/posts/mod.ts';
 const DIST_DIR = `${Deno.cwd()}/docs`;
 const STATIC = `${Deno.cwd()}/static`;
 
-const getStandardTitle = (pageTitle: string) => `${pageTitle} - Canfield R&D`
+const getStandardTitle = (pageTitle: string) => `${pageTitle} - Co/de:baser/`
 
 
 export async function render() {
