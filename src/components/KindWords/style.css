@@ -1,0 +1,12 @@
+.KindWords {
+  --image-size: 12rem;
+}
+
+.KindWords figure {
+  width: var(--image-size);
+}
+.KindWords figure img {
+  width: var(--image-size);
+  height: var(--image-size);
+}
+

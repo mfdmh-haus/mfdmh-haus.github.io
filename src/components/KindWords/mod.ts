@@ -1,4 +1,4 @@
-import { readTextFileFromModule, renderTemplate, TemplateData } from "~/util.ts";
+import { readTextFileFromModule, renderTemplate, TemplateData, useStyleSheet } from "~/util.ts";
 
 const template = await readTextFileFromModule("./template.html", import.meta);
 
@@ -10,5 +10,6 @@ export interface KindWordsProps extends TemplateData {
 }
 
 export const KindWords = (props: KindWordsProps) => {
+  useStyleSheet("./style.css", import.meta)
   return renderTemplate(template, props);
 };
