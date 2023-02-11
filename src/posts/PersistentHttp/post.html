@@ -142,7 +142,7 @@ Though its details are outside the scope of this post, it’s probably good to m
 <h3>When would I not use this?</h3>
 
 <p>
-WebSockets might be a better solution If there’s a need for a lot of simultaneous connections, since all browsers have a <a href="http://www.stevesouders.com/blog/2008/03/20/roundup-on-parallel-connections/">limit</a> on the number of simultaneous HTTP connections per domain. This limit is in place because each HTTP connection has relatively high a cost in server CPU usage and network congestion, so even if an application doesn’t run up against the browsers’ limits there still may be larger performance hit for simultaneous connections compared to WebSockets. (author’s note: I haven’t been able to find hard data on the network overhead of *persistent* HTTP connections vs WebSocket connections. I’d love to know if anyone out there can point me to online resources)
+WebSockets might be a better solution if there’s a need for a lot of simultaneous connections, since all browsers have a <a href="http://www.stevesouders.com/blog/2008/03/20/roundup-on-parallel-connections/">limit</a> on the number of simultaneous HTTP connections per domain. This limit is in place because each HTTP connection has relatively high a cost in server CPU usage and network congestion, so even if an application doesn’t run up against the browsers’ limits there still may be larger performance hit for simultaneous connections compared to WebSockets. (author’s note: I haven’t been able to find hard data on the network overhead of *persistent* HTTP connections vs WebSocket connections. I’d love to know if anyone out there can point me to online resources)
 </p>
 
 <p>
