@@ -2,30 +2,36 @@
 
 import {
     ensureDir,
-    copy,
+    copy as _copy,
 } from "fs";
-import {renderTemplate} from '~/util.ts';
+import {getStaticTargets, renderTemplate} from '~/util.ts';
 import {Home} from "~/pages/Home/mod.ts";
 import * as Posts from '~/posts/mod.ts';
 
 
-const DIST_DIR = `${Deno.cwd()}/docs`;
-const STATIC = `${Deno.cwd()}/static`;
+const pwd = Deno.cwd()
+const DIST_DIR = `${pwd}/docs`;
 
 const getStandardTitle = (pageTitle: string) => `${pageTitle} - Co/de:baser/`
 
 
 export async function render() {
   await ensureDir(DIST_DIR);
-  await copy(STATIC, `${DIST_DIR}/static`, {overwrite: true});
+  await ensureDir(`${DIST_DIR}/static`);
+  await copy(`${pwd}/src/styles`, `${DIST_DIR}/static/styles`);
+  await copy(`${pwd}/src/images`, `${DIST_DIR}/static/images`);
 
-  const documentTemplate = await Deno.readTextFile(`${Deno.cwd()}/src/html/document.html`)
+  const documentTemplate = await Deno.readTextFile(`${pwd}/src/html/document.html`)
 
   const pages = [
     {filePath: 'index', content: renderTemplate(documentTemplate, {title: getStandardTitle("home"), content: Home()})},
     {filePath: 'post/deno', content: renderTemplate(documentTemplate, {title: getStandardTitle("Deno"), content: Posts.Deno.Post()})},
     {filePath: 'post/persistent_http', content: renderTemplate(documentTemplate, {title: getStandardTitle("Persistent HTTP"), content: Posts.PersistHttp.Post()})},
   ];
+
+  for (const target of getStaticTargets()) {
+    await copy(target.src, `${DIST_DIR}${target.uri}`)
+  }
 
   for await (const p of pages) {
     if (p.filePath === 'index') {
@@ -38,6 +44,10 @@ export async function render() {
   }
 }
 
+async function copy(from: string, to: string) {
+  console.log(`Copy ${from} to ${to}`)
+  await _copy(from, to, {overwrite: true});
+}
 
 async function write(path: string, content: string) {
   console.log(`Render ${path}`)
