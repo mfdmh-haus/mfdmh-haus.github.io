@@ -1,5 +1,5 @@
 .HeroHeader {
-  --height: 100vh;
+  --height: 40vh;
   --filter: none;
 
   height: var(--height);
