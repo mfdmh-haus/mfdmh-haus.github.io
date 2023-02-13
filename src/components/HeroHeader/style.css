@@ -1,10 +1,8 @@
 .HeroHeader {
-  --height: 20rem;
-  height: var(--height);
+  --height: 100vh;
+  --filter: none;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  height: var(--height);
 
   position: relative;
 }
@@ -17,7 +15,7 @@
   background-size: cover;
   background-repeat: no-repeat;
   background-image: var(--image-url);
-  filter: grayscale(100%);
+  filter: var(--filter);
 }
 .HeroHeader::after {
   content: "";
@@ -27,14 +25,14 @@
   background-image: linear-gradient(transparent, var(--color-bg));
 }
 
-.HeroHeader h1,
-.HeroHeader h2,
-.HeroHeader h3,
-.HeroHeader h4,
-.HeroHeader h5,
-.HeroHeader h6 {
-  margin: 0;
-  padding: 1rem 1.5rem;
-  backdrop-filter: invert(1) brightness(0.5);
-  color: var(--color-hi);
+.HeroHeader .page {
+  position: relative;
+  z-index: 1;
+
+  height: var(--height);
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
 }

@@ -2,13 +2,17 @@ import { readTextFileFromModule, renderTemplate, TemplateData, useStyleSheet } f
 
 const template = await readTextFileFromModule("./template.html", import.meta);
 
-interface HeroHeaderProps extends TemplateData {
+interface HeroHeaderProps {
   imageUrl: string,
-  headerLevel: number,
-  headerText: string
+  headerHtml: string,
+  filter?: string,
 }
 
 export function HeroHeader(props: HeroHeaderProps) {
   useStyleSheet("./style.css", import.meta)
-  return renderTemplate(template, props);
+  const data: TemplateData = {
+    ...props,
+    filter: props.filter || "var(--filter)"
+  }
+  return renderTemplate(template, data);
 }
