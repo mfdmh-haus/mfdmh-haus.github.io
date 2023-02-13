@@ -6,7 +6,6 @@ export const Post = () => {
   return renderTemplate(template, {
     header: HeroHeader({
       imageUrl: "/static/images/deno_news.png",
-      headerLevel: 1,
       headerHtml: "<h1>Discovering Deno</h1>"
     })
   })
