@@ -8,3 +8,7 @@ body {
   background-color: var(--color-bg);
   color: var(--color-text);
 }
+
+.color-hi {
+  color: var(--color-hi);
+}
