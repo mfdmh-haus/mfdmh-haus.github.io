@@ -14,7 +14,7 @@ export function renderTemplate(template: string, data: TemplateData) {
   return renderTemplateBasic(template, data)
 }
 
-function renderTemplateBasic(template: string, data: Record<string, string>) {
+function renderTemplateBasic(template: string, data: TemplateData) {
   return template.replaceAll(templateSlotRE, replaceTemplateSlot)
 
   function replaceTemplateSlot(_: string, slotName: string) {
