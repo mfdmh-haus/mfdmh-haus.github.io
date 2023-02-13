@@ -1,6 +1,13 @@
-import { readTextFileFromModule } from "~/util.ts";
+import { readTextFileFromModule, renderTemplate } from "~/util.ts";
+import { HeroHeader } from "../../components/HeroHeader/mod.ts";
 
-const postContent = await readTextFileFromModule('./post.html', import.meta)
+const template = await readTextFileFromModule('./post.html', import.meta)
 export const Post = () => {
-  return postContent
+  return renderTemplate(template, {
+    header: HeroHeader({
+      imageUrl: "/static/images/deno_news.png",
+      headerLevel: 1,
+      headerHtml: "<h1>Discovering Deno</h1>"
+    })
+  })
 };
