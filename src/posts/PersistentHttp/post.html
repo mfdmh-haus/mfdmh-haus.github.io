@@ -1,11 +1,9 @@
+${header}
 <article class="page">
-<h1>Smelling the roses with persistent HTTP connections</h1>
 
 <h2>The how, why and why not, using Python’s Pyramid framework</h2>
 
 <aside>The following is a repost of an article I wrote which originally <a href="https://www.rallyhealth.com/coding/smelling-the-roses-with-persistent-http-connections">appeared</a> in the Rally Engineering Blog on <time datetime="2018-12-17">2018, December 12th</a></aside>
-
-<img src="/static/images/smelling_roses.png" alt="a python picking petals of a rose cuddled around a computer" title="I drew this lol"/>
 
 <p>
 In this post I’m going to explain how to respond to requests to a Pyramid web app, though not all at once as per usual, but little by little using a <a href="https://en.wikipedia.org/wiki/HTTP_persistent_connection">persistent HTTP connection</a>. Other technologies, e.g. Node, make this kind of thing much more obvious, but that may not be sufficient reason for everyone to adopt something new. The “why”, explained in more detail towards the end, can be boiled down to potential performance gains, as well as saving electricity and developer sanity. So, if you’re interested in building a modern web app using Pyramid, this article is for you!
@@ -118,10 +116,14 @@ curl localhost:8000
 <p>
 Voila! You should see numbers appear with stuttering irregularity.
 </p>
+<figure>
+<img src="/static/images/smelling_roses.png" alt="a python picking petals of a rose cuddled around a computer" title="I drew this lol"/>
+<caption>Take a breather</caption>
+</figure>
 
-<p>
+<h3>
 Cool, but when would I use this?
-</p>
+</h3>
 
 <p>
 Using this tactic, any application which needs a mostly one-way flow of time-sensitive messages from server to client can be made more efficient, performant and maintainable. Suppose a request initiates a process that takes relatively long but variable time to complete, a good user experience demands some kind of progress feedback on the client. Likewise, in an application with dynamic resources like a social media site or a stock trader, updates should be reflected on the client in near real-time.
