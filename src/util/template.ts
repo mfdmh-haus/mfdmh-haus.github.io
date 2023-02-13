@@ -1,11 +1,12 @@
 import { LinkStruct, _getStyleSheets } from "../internal/build_state.ts"
 
 const templateSlotRE = /\$\{(.*?)\}/g
-export type TemplateData = Record<string, string>
+
+export type TemplateData = Record<string, string | number>
 
 export const SPECIAL_SLOT_SYTLESHEETS = Symbol("StyleSheets")
 
-export function renderTemplate(template: string, data: Record<string, string>) {
+export function renderTemplate(template: string, data: TemplateData) {
   const derivedData = {
     $styleSheetLinks: renderLinks(_getStyleSheets())
   }
