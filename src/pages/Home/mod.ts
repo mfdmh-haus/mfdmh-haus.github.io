@@ -1,6 +1,6 @@
 import { KindWords, KindWordsProps } from "~/components/KindWords/mod.ts";
 import { readTextFileFromModule, renderTemplate } from "~/util.ts";
-import { HeroHeader } from "../../components/HeroHeader/mod.ts";
+import { HeroHeader } from "~/components/HeroHeader/mod.ts";
 
 const template = await readTextFileFromModule("./template.html", import.meta);
 
