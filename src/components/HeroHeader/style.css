@@ -1,0 +1,40 @@
+.HeroHeader {
+  --height: 20rem;
+  height: var(--height);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+}
+.HeroHeader::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-image: var(--image-url);
+  filter: grayscale(100%);
+}
+.HeroHeader::after {
+  content: "";
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%; height: 50%;
+  background-image: linear-gradient(transparent, var(--color-bg));
+}
+
+.HeroHeader h1,
+.HeroHeader h2,
+.HeroHeader h3,
+.HeroHeader h4,
+.HeroHeader h5,
+.HeroHeader h6 {
+  margin: 0;
+  padding: 1rem 1.5rem;
+  backdrop-filter: invert(1) brightness(0.5);
+  color: var(--color-hi);
+}
