@@ -30,9 +30,9 @@ const kindWords: Array<KindWordsProps> = [
 export const Home = () => {
   return renderTemplate(template, {
     header: HeroHeader({
-      headerLevel: 1,
-      headerText: "codebaser.net",
-      imageUrl: "/static/images/consider-lillies.png"
+      headerHtml: "<h1>codebaser.net</h1>",
+      imageUrl: "/static/images/consider-lillies.png",
+      filter: "grayscale(100%)"
     }),
     kindWords: kindWords.map(KindWords).join("")
   });
