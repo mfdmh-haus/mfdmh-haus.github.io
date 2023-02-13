@@ -1,4 +1,8 @@
 import { KindWords, KindWordsProps } from "~/components/KindWords/mod.ts";
+import { readTextFileFromModule, renderTemplate } from "~/util.ts";
+import { HeroHeader } from "../../components/HeroHeader/mod.ts";
+
+const template = await readTextFileFromModule("./template.html", import.meta);
 
 const kindWords: Array<KindWordsProps> = [
   {
@@ -7,7 +11,7 @@ const kindWords: Array<KindWordsProps> = [
     distinction: "Software Engineer @ XREngine, formerly at Mappa Labs",
     quote: `
         <p>
-        Patrick got me on my feet with some new Tech: Code reviews from him were informative, being detail-oriented but without missing the bigger picture, which really optimized what I had wrote. In-line with code reviews he helped set up an efficient Github workflow that streamlined our development process. All around, he was a substantial help to both myself and our project.
+        Patrick got me on my feet with some new technologies: Code reviews from him were informative, being detail-oriented but without missing the bigger picture, which really optimized what I had wrote. In-line with code reviews he helped set up an efficient Github workflow that streamlined our development process. All around, he was a substantial help to both myself and our project.
         </p>
     `,
   },
@@ -24,12 +28,12 @@ const kindWords: Array<KindWordsProps> = [
 ];
 
 export const Home = () => {
-  return `
-  <section>
-    <h2>kind words</h2>
-
-    ${kindWords.map(KindWords).join("")}
-
-  </section>
-  `;
+  return renderTemplate(template, {
+    header: HeroHeader({
+      headerLevel: 1,
+      headerText: "codebaser.net",
+      imageUrl: "/static/images/consider-lillies.png"
+    }),
+    kindWords: kindWords.map(KindWords).join("")
+  });
 };
