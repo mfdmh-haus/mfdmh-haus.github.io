@@ -1,5 +1,5 @@
 import { readTextFileFromModule, renderTemplate } from "~/util.ts";
-import { HeroHeader } from "../../components/HeroHeader/mod.ts";
+import { HeroHeader } from "~/components/HeroHeader/mod.ts";
 
 const template = await readTextFileFromModule('./post.html', import.meta)
 export const Post = () => {
