@@ -12,7 +12,7 @@ import * as Posts from '~/posts/mod.ts';
 const pwd = Deno.cwd()
 const DIST_DIR = `${pwd}/docs`;
 
-const getStandardTitle = (pageTitle: string) => `${pageTitle} - Co/de:baser/`
+const getStandardTitle = (pageTitle: string) => `${pageTitle} - Codebaser.net`
 
 
 export async function render() {
