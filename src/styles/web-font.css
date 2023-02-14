@@ -1,0 +1,40 @@
+@font-face {
+    font-family: 'Nerd Font Mono';
+    src: local('Fantasque Sans Mono Regular Nerd Font Complete Mono'), local('FantasqueSansMonoNerdFontCompleteM-Regular'),
+        url('static/fonts/FantasqueSansMonoNerdFontCompleteM-Regular.woff2') format('woff2'),
+        url('static/fonts/FantasqueSansMonoNerdFontCompleteM-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Nerd Font Mono';
+    src: local('Fantasque Sans Mono Bold Italic Nerd Font Complete Mono'), local('FantasqueSansMonoNerdFontCompleteM-BoldItalic'),
+        url('static/fonts/FantasqueSansMonoNerdFontCompleteM-BoldItalic.woff2') format('woff2'),
+        url('static/fonts/FantasqueSansMonoNerdFontCompleteM-BoldItalic.woff') format('woff');
+    font-weight: bold;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Nerd Font Mono';
+    src: local('Fantasque Sans Mono Bold Nerd Font Complete Mono'), local('FantasqueSansMonoNerdFontCompleteM-Bold'),
+        url('static/fonts/FantasqueSansMonoNerdFontCompleteM-Bold.woff2') format('woff2'),
+        url('static/fonts/FantasqueSansMonoNerdFontCompleteM-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Nerd Font Mono';
+    src: local('Fantasque Sans Mono Italic Nerd Font Complete Mono'), local('FantasqueSansMonoNerdFontCompleteM-Italic'),
+        url('static/fonts/FantasqueSansMonoNerdFontCompleteM-Italic.woff2') format('woff2'),
+        url('static/fonts/FantasqueSansMonoNerdFontCompleteM-Italic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+

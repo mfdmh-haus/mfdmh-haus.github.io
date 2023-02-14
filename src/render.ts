@@ -18,6 +18,7 @@ const getStandardTitle = (pageTitle: string) => `${pageTitle} - Codebaser.net`
 export async function render() {
   await ensureDir(DIST_DIR);
   await ensureDir(`${DIST_DIR}/static`);
+  await copy(`${pwd}/src/fonts`, `${DIST_DIR}/static/fonts`);
   await copy(`${pwd}/src/styles`, `${DIST_DIR}/static/styles`);
   await copy(`${pwd}/src/images`, `${DIST_DIR}/static/images`);
 
