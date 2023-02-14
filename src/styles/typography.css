@@ -25,8 +25,13 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 1rem;
   padding-top: 2rem;
   line-height: 1.2em;
+  font-family: 'Nerd Font Mono', 'Courier New', Courier, monospace;
 }
 
 p {
   margin-bottom: 1rem;
+}
+
+pre {
+  font-family: 'Nerd Font Mono', 'Courier New', Courier, monospace;
 }
