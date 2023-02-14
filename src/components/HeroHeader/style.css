@@ -5,6 +5,7 @@
   height: var(--height);
 
   position: relative;
+  width: 100%;
 }
 .HeroHeader::before {
   content: "";
@@ -35,4 +36,20 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-end;
+}
+
+.HeroHeader .HeroHeader-imageCaption {
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 1;
+  text-align: right;
+  padding: 1rem;
+}
+
+.HeroHeader .HeroHeader-meta {
+  position: absolute;
+  left: var(--spacing-horizontal);
+  bottom: 0;
+  z-index: 1;
 }
