@@ -26,6 +26,9 @@ h1, h2, h3, h4, h5, h6 {
   padding-top: 2rem;
   line-height: 1.2em;
   font-family: 'Nerd Font Mono', 'Courier New', Courier, monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 p {

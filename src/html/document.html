@@ -31,16 +31,21 @@
     <style>
 
       :root {
-        --page-max-width: calc(100% - var(--sidebar-max-width));
-        --page-padding-horizontal: 2em;
-
+        --spacing-horizontal: 2rem;
+        --page-width: calc(50rem - var(--spacing-horizontal) * 2);
+        --page-w-sidebar-width: calc(var(--page-width) - var(--spacing-horizontal));
         --sidebar-max-width: 20%;
       }
 
       .page {
-        max-width: var(--page-max-width);
-        padding: 0 var(--page-padding-horizontal);
+        max-width: 100%;
+        width: var(--page-width);
+        padding: var(--spacing-horizontal);
         margin: 0 auto;
+      }
+
+      .sidebar + .page {
+        max-width: var(--page-w-sidebar-max-width);
       }
 
       .page pre {
