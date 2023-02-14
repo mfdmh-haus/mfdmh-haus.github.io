@@ -1,0 +1,36 @@
+
+name: Build and deploy site
+
+on: [push]
+
+jobs:
+  deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write # Needed for auth with Deno Deploy
+      contents: read # Needed to clone the repository
+
+    steps:
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.30.0
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Build
+        run: ./scripts/render.ts
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: 'docs'
+
+      - name: Upload to Deno Deploy
+        uses: denoland/deployctl@v1
+        with:
+          project: "rtmp-web"
+          root: docs
+          import-map: ./import_map.json
